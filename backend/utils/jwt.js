@@ -10,3 +10,4 @@ export const jwtToken = (userId) => {
     console.log(`jwt token error: ${error.message}`);
   }
 };
+
