@@ -2,17 +2,27 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDb from "./config/databaseConnect.js";
 import cookieParser from "cookie-parser";
+import authRouter from "./routes/authRoutes.js";
+import cors from "cors";
+
 const app = express();
 dotenv.config();
 const port = process.env.PORT || 5000;
-
-app.use(cookieParser())
-app.use(cors,{})
+app.use(cookieParser());
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:8000",
+    credentials: true,
+  })
+);
 app.get("/", (req, res) => {
   res.send("hello");
 });
+app.use("/auth", authRouter);
 
-app.listen(port, () => {
-  connectDb();
-  console.log(`Server listening on ${port}`);
+connectDb().then(() => {
+  app.listen(port, () => {
+    console.log(`Server listening on ${port}`);
+  });
 });

@@ -1,17 +1,23 @@
 import User from "../models/userModel.js";
-
+import bcrypt from "bcryptjs";
+import { jwtToken } from "../utils/jwt.js";
 export const signUp = async (req, res) => {
   try {
     const { username, name, email, password } = req.body;
-    if (!username || !!name || !email || !password) {
+    if (!username || !name || !email || !password) {
       return res.status(400).json({ message: "Fill all the fields!" });
     }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exist!" });
     }
-    const hashedPassword = bcrypt.hash(password, 10);
-    const userSignUp = User.create({
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "password must be atleast 6 characters!" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userSignUp = await User.create({
       username,
       name,
       email,
@@ -19,17 +25,49 @@ export const signUp = async (req, res) => {
     });
 
     const token = await jwtToken(userSignUp._id);
-    res.cookie(token, "token", {
+
+    res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "lax",
       secure: false,
     });
 
-    return res.status(201).json(`User created successfully! ${userSignUp}`);
+    return res.status(201).json({
+      message: "User created successfully!",
+      user: userSignUp,
+    });
   } catch (error) {
     return res
       .status(500)
       .json({ message: `SignUp user error ${error.message}` });
+  }
+};
+
+export const logIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return res.status(400).json({ message: "User does not exist!" });
+    }
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Incorrect password" });
+    }
+    const token = jwtToken(existingUser._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "lax",
+    });
+    return res
+      .status(200)
+      .json({ message: "Login Successful!", user: existingUser });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Login error: ${error.message}`,
+    });
   }
 };
