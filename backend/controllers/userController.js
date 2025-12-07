@@ -3,8 +3,8 @@ import bcrypt from "bcryptjs";
 import { jwtToken } from "../utils/jwt.js";
 export const signUp = async (req, res) => {
   try {
-    const { username, name, email, password } = req.body;
-    if (!username || !name || !email || !password) {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
       return res.status(400).json({ message: "Fill all the fields!" });
     }
     const existingUser = await User.findOne({ email });
@@ -19,7 +19,6 @@ export const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const userSignUp = await User.create({
       username,
-      name,
       email,
       password: hashedPassword,
     });
