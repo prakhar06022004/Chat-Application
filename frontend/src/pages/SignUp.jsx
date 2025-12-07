@@ -6,27 +6,21 @@ import axios from "axios";
 import { HashLoader } from "react-spinners";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 function SignUp() {
+  const dispatchRedux = useDispatch();
   const { loginWithRedirect, isAuthenticated, user, isLoading } = useAuth0();
   const navigate = useNavigate();
   const { serverUrl, loading, setLoading } = useContext(UserContext);
-
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
-
-  // Auto redirect to Google login if you want
-  // Uncomment this if you want page load -> direct Google login
-  // useEffect(() => {
-  //   loginWithRedirect({
-  //     connection: "google-oauth2",
-  //     redirectUri: window.location.origin,
-  //   });
-  // }, []);
-
+  // const { userData } = useSelector((state) => state.user);
+  // console.log("userData", userData);
   const handleGoogleLogin = async () => {
     try {
       // Direct Google login, hosted page bypass
@@ -49,6 +43,7 @@ function SignUp() {
         { withCredentials: true }
       );
       console.log(data);
+      dispatchRedux(setUserData(data));
       setUserName("");
       setEmail("");
       setPassword("");
@@ -130,10 +125,7 @@ function SignUp() {
 
           <p className="underline text-gray-600 cursor-pointer mt-3">
             Already have an account?{" "}
-            <span
-              className="text-blue-700"
-              onClick={() => navigate("/login")}
-            >
+            <span className="text-blue-700" onClick={() => navigate("/login")}>
               Login?
             </span>
           </p>
