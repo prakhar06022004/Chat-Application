@@ -4,6 +4,7 @@ import connectDb from "./config/databaseConnect.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoutes.js";
 import cors from "cors";
+import userRouter from "./routes/getCurrentUser.js";
 
 const app = express();
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(
   })
 );
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 connectDb().then(() => {
   app.listen(port, () => {
