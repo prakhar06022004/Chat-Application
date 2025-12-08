@@ -6,7 +6,7 @@ import axios from "axios";
 import { HashLoader } from "react-spinners";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
 
 function SignUp() {
@@ -19,11 +19,9 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
-  // const { userData } = useSelector((state) => state.user);
-  // console.log("userData", userData);
+
   const handleGoogleLogin = async () => {
     try {
-      // Direct Google login, hosted page bypass
       await loginWithRedirect({
         connection: "google-oauth2",
         redirectUri: window.location.origin,

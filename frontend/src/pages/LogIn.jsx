@@ -8,15 +8,13 @@ import { UserContext } from "../context/ContextApi";
 import { HashLoader } from "react-spinners";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
 
 function LogIn() {
   const { loginWithRedirect, isAuthenticated, user, logout, isLoading } =
     useAuth0();
   const dispatchRedux = useDispatch();
-  // const { userData } = useSelector((state) => state.user);
-  // console.log(userData);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const { serverUrl, loading, setLoading } = useContext(UserContext);
