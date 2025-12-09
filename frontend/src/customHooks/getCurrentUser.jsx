@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { UserContext } from "../context/ContextApi";
 import { useContext, useEffect } from "react";
 import { setUserData } from "../redux/userSlice";
@@ -7,7 +7,7 @@ import { setUserData } from "../redux/userSlice";
 const GetCurrentUser = () => {
   const { serverUrl } = useContext(UserContext);
   const dispatchRedux = useDispatch();
-  const { userData } = useSelector((state) => state.user);
+//   const { userData } = useSelector((state) => state.user);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -20,7 +20,7 @@ const GetCurrentUser = () => {
       }
     };
     fetchUser();
-  }, [userData]);
+  }, []);
 };
 
 export default GetCurrentUser;

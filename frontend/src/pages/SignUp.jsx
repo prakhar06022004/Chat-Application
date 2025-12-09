@@ -57,7 +57,7 @@ function SignUp() {
 
   return (
     <div className="w-full h-screen flex justify-center items-center p-2">
-      <div className="w-full max-w-[500px] sm:h-[600px] h-full border-2 border-[#20c7ff] shadow-xl shadow-gray-300 rounded-[10px] flex flex-col overflow-hidden select-none ">
+      <div className="w-full max-w-[500px] sm:h-[600px] h-full border-2 border-[#20c7ff] shadow-xl shadow-gray-300 rounded-[10px] flex flex-col overflow-hidden select-none">
         <div className="bg-[#20c7ff] w-full sm:h-[150px] h-[120px] rounded-b-full flex justify-center items-center text-center">
           <h1 className="font-lobster sm:text-4xl text-3xl sm:mb-0 mb-5 font-bold">
             Welcome to <span className="text-[#ededed]">Pakhiii</span>
