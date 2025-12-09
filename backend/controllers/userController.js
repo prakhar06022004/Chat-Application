@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import { jwtToken } from "../utils/jwt.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 export const signUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -78,6 +79,28 @@ export const logOut = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: `Logout error: ${error.message}`,
+    });
+  }
+};
+
+export const profile = async (req, res) => {
+  try {
+    const { name } = req.body;
+    let imageUrl;
+    if (req.file) {
+      imageUrl = await uploadOnCloudinary(req.file.path);
+    }
+    let user = await User.findByIdAndUpdate(req.user_id, {
+      name,
+      image: imageUrl,
+    });
+    if (!user) {
+      return res.status(400).json({ message: "User is not found!" });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({
+      message: `profile error: ${error.message}`,
     });
   }
 };
