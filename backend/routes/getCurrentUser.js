@@ -5,5 +5,5 @@ import upload from "../middlewares/multer.js";
 import { profile } from "../controllers/userController.js";
 const userRouter = express.Router();
 userRouter.get("/getcurrent", isAuth, getCurrentUser);
-userRouter.post("/profile", isAuth, upload.single("backendImage"), profile);
+userRouter.put("/profile", isAuth, upload.single("backendImage"), profile);
 export default userRouter;

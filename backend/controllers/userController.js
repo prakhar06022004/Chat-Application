@@ -84,16 +84,20 @@ export const logOut = async (req, res) => {
 };
 
 export const profile = async (req, res) => {
+  // console.log("USER ID ---> ", req.userId);
+  // console.log("FILE ---> ", req.file);
+  // console.log("BODY ---> ", req.body);
+
   try {
     const { name } = req.body;
     let imageUrl;
     if (req.file) {
       imageUrl = await uploadOnCloudinary(req.file.path);
     }
-    let user = await User.findByIdAndUpdate(req.user_id, {
+    let user = await User.findByIdAndUpdate(req.userId, {
       name,
       image: imageUrl,
-    });
+    },{new: true});
     if (!user) {
       return res.status(400).json({ message: "User is not found!" });
     }
