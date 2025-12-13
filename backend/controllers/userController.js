@@ -94,10 +94,14 @@ export const profile = async (req, res) => {
     if (req.file) {
       imageUrl = await uploadOnCloudinary(req.file.path);
     }
-    let user = await User.findByIdAndUpdate(req.userId, {
-      name,
-      image: imageUrl,
-    },{new: true});
+    let user = await User.findByIdAndUpdate(
+      req.userId,
+      {
+        name,
+        image: imageUrl,
+      },
+      { new: true }
+    );
     if (!user) {
       return res.status(400).json({ message: "User is not found!" });
     }
@@ -106,5 +110,16 @@ export const profile = async (req, res) => {
     return res.status(500).json({
       message: `profile error: ${error.message}`,
     });
+  }
+};
+
+export const getOtherUsers = async (req, res) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.userId } }).select(
+      "-password"
+    );
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ message: "getOtherUsers error", error });
   }
 };

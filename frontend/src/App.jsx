@@ -8,8 +8,10 @@ import Profile from "./pages/Profile";
 import { useContext } from "react";
 import { UserContext } from "./context/ContextApi";
 import { ScaleLoader	 } from "react-spinners";
+import GetOtherUser from "./customHooks/getOtherUsers";
 function App() {
   GetCurrentUser();
+  GetOtherUser();
   const { authLoading } = useContext(UserContext);
   const { userData } = useSelector((state) => state.user);
   if (authLoading) {

@@ -8,6 +8,7 @@ function Home() {
         <Sidebar />
         <MessageArea />
       </div>
+
     </>
   );
 }

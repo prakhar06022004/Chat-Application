@@ -31,7 +31,7 @@ function LogIn() {
         { email, password },
         { withCredentials: true }
       );
-      dispatchRedux(setUserData(data));
+      dispatchRedux(setUserData(data.user));
       console.log(data);
       setEmail("");
       setPassword("");
