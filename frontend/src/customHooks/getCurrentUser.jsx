@@ -5,7 +5,7 @@ import { useContext, useEffect } from "react";
 import { setUserData } from "../redux/userSlice";
 
 const GetCurrentUser = () => {
-  const { serverUrl } = useContext(UserContext);
+  const { serverUrl, setAuthLoading } = useContext(UserContext);
   const dispatchRedux = useDispatch();
 //   const { userData } = useSelector((state) => state.user);
   useEffect(() => {
@@ -17,6 +17,8 @@ const GetCurrentUser = () => {
         dispatchRedux(setUserData(data));
       } catch (error) {
         console.log(error.message);
+      }finally {
+        setAuthLoading(false);
       }
     };
     fetchUser();
