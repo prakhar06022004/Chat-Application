@@ -23,6 +23,8 @@ function App() {
   }
   return (
     <>
+        <GetCurrentUser />
+      <GetOtherUser />
       <Routes>
         <Route
           path="/signup"
