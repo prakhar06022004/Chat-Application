@@ -5,19 +5,19 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/ContextApi";
-import { HashLoader } from "react-spinners";
+import { HashLoader, ScaleLoader } from "react-spinners";
 import { setUserData } from "../redux/userSlice";
 
-function Profile() {
+function Profile() { 
+   const ref = useRef();
   const navigate = useNavigate();
   const dispatchRedux = useDispatch();
-  const { setLoading, loading } = useContext(UserContext);
+  const { setLoading, loading,serverUrl } = useContext(UserContext);
   const { userData } = useSelector((state) => state.user);
   const [frontendImage, setFrontendImage] = useState(userData?.image || "");
   const [backendImage, setBackendImage] = useState(userData?.image || "");
   const [name, setName] = useState(userData?.name || "");
-  const { serverUrl } = useContext(UserContext);
-  const ref = useRef();
+
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -46,6 +46,14 @@ function Profile() {
       setLoading(false);
     }
   };
+
+ if (!userData) {
+  return (
+    <div className="w-full h-screen flex justify-center items-center">
+      <ScaleLoader size={30} color="#525252" />
+    </div>
+  );
+}
   return (
     <>
       <div className="w-full h-screen bg-slate-200 flex justify-center items-center flex-col">
@@ -93,13 +101,14 @@ function Profile() {
             <input
               type="text"
               readOnly
-              value={userData?.username}
+              value={userData?.username || ""}
               className="w-full p-2 rounded-2xl outline-none border border-[#20c7ff] focus:border-[#20c7ff] text-gray-500 hover:cursor-not-allowed"
+              
             />
             <input
               type="email"
               readOnly
-              value={userData?.email}
+              value={userData?.email || ""}
               className="w-full p-2 rounded-2xl outline-none border border-[#20c7ff] focus:border-[#20c7ff] text-gray-500 hover:cursor-not-allowed"
             />
             <button  type="submit"

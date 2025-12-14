@@ -64,20 +64,26 @@ function Sidebar() {
         />
         <IoIosSearch size={30} />
       </div>
-      {otherUserData?.map((user) => (
-        <div
-          key={user._id}
-          className="w-[50px] h-[50px] rounded-full overflow-visible mt-4 relative outline-gray-500/50 outline-3"
-        >
-          <img
-            src={user.image || emptyImage}
-            className="w-full h-full object-cover rounded-full relative"
-          />
-          <span className="absolute -bottom-1 -right-0.5">
-            <GoDotFill color="#929693" />
-          </span>
-        </div>
-      ))}
+      {/* Online users strip */}
+<div className="w-full overflow-x-auto overflow-y-hidden mt-3 thin-scrollbar">
+  <div className="flex gap-2 px-1 h-[60px] items-center">
+    {otherUserData?.map((user) => (
+      <div
+        key={user._id}
+        className="w-[50px] h-[50px] rounded-full shrink-0 relative"
+      >
+        <img
+          src={user.image || emptyImage}
+          className="w-full h-full object-cover rounded-full"
+        />
+        <span className="absolute -bottom-0.5 right-0">
+          <GoDotFill color="#929693" />
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
       <button
         className="bg-[#20c7ff] w-fit p-5 rounded-full absolute bottom-0 cursor-pointer"
         onClick={handleLogout}

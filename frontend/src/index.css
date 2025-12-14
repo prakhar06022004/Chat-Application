@@ -1,8 +1,28 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Margarine&family=Pacifico&display=swap');
-@theme {
+@import url("https://fonts.googleapis.com/css2?family=Lobster&family=Margarine&family=Pacifico&display=swap");
+:root {
   --font-pacifico: "Pacifico", cursive;
   --font-lobster: "Lobster", sans-serif;
   --font-margarine: "Margarine", sans-serif;
+}
+
+/* Thin horizontal scrollbar */
+.thin-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #bdbdbd transparent;
+}
+
+/* Chrome, Edge, Safari */
+.thin-scrollbar::-webkit-scrollbar {
+  height: 6px; /* X scrollbar thickness */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d1d1;
+  border-radius: 10px;
 }

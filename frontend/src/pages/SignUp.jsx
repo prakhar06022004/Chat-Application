@@ -11,7 +11,7 @@ import { setUserData } from "../redux/userSlice";
 
 function SignUp() {
   const dispatchRedux = useDispatch();
-  const { loginWithRedirect, isAuthenticated, user, isLoading } = useAuth0();
+  const { loginWithRedirect } = useAuth0();
   const navigate = useNavigate();
   const { serverUrl, loading, setLoading } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
@@ -41,11 +41,15 @@ function SignUp() {
         { withCredentials: true }
       );
       console.log(data);
-      dispatchRedux(setUserData(data));
+      dispatchRedux(setUserData(data.user));
+      console.log(data.user)
+      console.log(data)
       setUserName("");
       setEmail("");
       setPassword("");
-      navigate("/login"); // Redirect after successful signup
+      setTimeout(() => {
+        navigate("/profile");
+      }, 2000);
     } catch (error) {
       console.log(error.message);
       setErr(error.response?.data?.message || "Something went wrong");

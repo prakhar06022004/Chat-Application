@@ -7,8 +7,9 @@ import { setUserData } from "../redux/userSlice";
 const GetCurrentUser = () => {
   const { serverUrl, setAuthLoading } = useContext(UserContext);
   const dispatchRedux = useDispatch();
-//   const { userData } = useSelector((state) => state.user);
   useEffect(() => {
+    setAuthLoading(true)
+
     const fetchUser = async () => {
       try {
         const { data } = await axios.get(serverUrl + "/user/getcurrent", {
@@ -17,7 +18,7 @@ const GetCurrentUser = () => {
         dispatchRedux(setUserData(data));
       } catch (error) {
         console.log(error.message);
-      }finally {
+      } finally {
         setAuthLoading(false);
       }
     };
