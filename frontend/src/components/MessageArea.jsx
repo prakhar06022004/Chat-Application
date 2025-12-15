@@ -1,6 +1,6 @@
 function MessageArea() {
   return (
-    <div className="lg:w-60%] w-full h-full flex justify-center items-center">
+    <div className="md:w-40% w-full h-full hidden md:block">
       Message Area
     </div>
   );

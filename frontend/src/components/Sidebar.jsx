@@ -32,7 +32,7 @@ function Sidebar() {
 
   const { userData, otherUserData } = useSelector((state) => state.user);
   return (
-    <div className="lg:w-[40%] w-full h-full bg-slate-200 border-r border-gray-300 p-1 relative select-none">
+    <div className="md:w-[60%] w-full h-full bg-slate-200 border-r border-gray-300 p-1 relative select-none">
       <h1 className="text-2xl text-white font-lobster mt-2 font-semibold shadow-md shadow-gray-400 p-1 px-2 rounded-2xl bg-[#20c7ff] w-fit m-auto">
         Pakhiii | Chatting
       </h1>
@@ -52,7 +52,9 @@ function Sidebar() {
               src={userData?.image || emptyImage}
               alt="profile"
               className="w-full h-full object-cover rounded-full shadow-gray-500 shadow-md"
+              title="profile"
             />
+            
             <span className="absolute -bottom-0.5 right-0">
               <GoDotFill color="#51f542" />
             </span>
@@ -113,6 +115,7 @@ function Sidebar() {
       <button
         className="bg-[#20c7ff] w-fit p-5 rounded-full absolute bottom-0 cursor-pointer"
         onClick={handleLogout}
+        title="logout"
       >
         <SlLogout />
       </button>
