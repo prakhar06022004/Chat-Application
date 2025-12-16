@@ -3,7 +3,7 @@ import emptyImage from "../assets/emptyImage.png";
 import { GoDotFill } from "react-icons/go";
 import { IoIosSearch } from "react-icons/io";
 import { SlLogout } from "react-icons/sl";
-import { logout } from "../redux/userSlice";
+import { logout, setSelectedUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import axios from "axios";
@@ -36,7 +36,7 @@ function Sidebar() {
       <h1 className="text-2xl text-white font-lobster mt-2 font-semibold shadow-md shadow-gray-400 p-1 px-2 rounded-2xl bg-[#20c7ff] w-fit m-auto">
         Pakhiii | Chatting
       </h1>
-      <div className="bg-[#20c7ff] w-full sm:h-[70px] h-[60px] rounded-full flex flex-col items-center justify-center text-center border-r-black-500 shadow-md mt-2">
+      <div className="bg-[#20c7ff] w-full sm:h-[60px] h-[60px] rounded-full flex flex-col items-center justify-center text-center border-r-black-500 shadow-md mt-2">
         <div className="w-full flex justify-between items-center px-5">
           <h1 className="font-lobster -tracking-normal text-white font-bold text-[20px]">
             Hi,{" "}
@@ -54,7 +54,7 @@ function Sidebar() {
               className="w-full h-full object-cover rounded-full shadow-gray-500 shadow-md"
               title="profile"
             />
-            
+
             <span className="absolute -bottom-0.5 right-0">
               <GoDotFill color="#51f542" />
             </span>
@@ -89,28 +89,29 @@ function Sidebar() {
         </div>
       </div> */}
       <div className="w-full h-full flex flex-col items-center gap-2 mt-3 cursor-pointer ">
-  {otherUserData?.map((user) => (
-    <div
-      key={user._id}
-      className="w-full h-[60px] flex items-stretch bg-white shadow-md shadow-gray-400 rounded-2xl gap-3 px-1 hover:bg-gray-100 duration-150"
-    >
-      {/* Image wrapper */}
-      <div className="w-[50px] h-full flex items-center shrink-0">
-        <img
-          src={user.image || emptyImage}
-          className="w-[50px] h-[50px] object-cover rounded-full"
-        />
-      </div>
+        {otherUserData?.map((user) => (
+          <div
+            key={user._id}
+            className="w-full h-[60px] flex items-stretch bg-white shadow-md shadow-gray-400 rounded-2xl gap-3 px-1 hover:bg-gray-100 duration-150"
+            onClick={() => dispatchRedux(setSelectedUser(user))}
+          >
+            {/* Image wrapper */}
+            <div className="w-[50px] h-full flex items-center shrink-0">
+              <img
+                src={user.image || emptyImage}
+                className="w-[50px] h-[50px] object-cover rounded-full"
+              />
+            </div>
 
-      {/* Text wrapper */}
-      <div className="flex flex-col justify-start pt-1">
-        <h1 className="text-sm font-semibold text-[16px]">
-          {user?.name}
-        </h1>
+            {/* Text wrapper */}
+            <div className="flex flex-col justify-start pt-1">
+              <h1 className="text-sm font-semibold text-[16px]">
+                {user?.name}
+              </h1>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
 
       <button
         className="bg-[#20c7ff] w-fit p-5 rounded-full absolute bottom-0 cursor-pointer"
