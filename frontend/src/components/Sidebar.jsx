@@ -30,9 +30,9 @@ function Sidebar() {
     }
   };
 
-  const { userData, otherUserData } = useSelector((state) => state.user);
+  const { userData, otherUserData,selectedUser } = useSelector((state) => state.user);
   return (
-    <div className="md:w-[60%] w-full h-full bg-slate-200 border-r border-gray-300 p-1 relative select-none">
+    <div className={`md:w-[60%] w-full h-full bg-slate-200 border-r border-gray-300 p-1 relative select-none  ${selectedUser ? "hidden md:block" : "block"}`}>
       <h1 className="text-2xl text-white font-lobster mt-2 font-semibold shadow-md shadow-gray-400 p-1 px-2 rounded-2xl bg-[#20c7ff] w-fit m-auto">
         Pakhiii | Chatting
       </h1>

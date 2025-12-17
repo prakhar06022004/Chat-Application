@@ -6,12 +6,18 @@ function MessageArea() {
   const { selectedUser } = useSelector((state) => state.user);
   const dispatchRedux = useDispatch();
   return (
-    <div className="md:w-40% w-full h-full hidden md:block">
+    <div
+      className={`md:w-40% w-full h-full sm:px-5 px-5  ${
+        selectedUser ? "block" : "hidden md:flex"
+      }
+`}
+    >
       {selectedUser && (
-        <div className="bg-[#20c7ff] w-full sm:h-[70px] h-[60px] rounded-full flex items-center border-r-black-500 shadow-md mt-2 gap-4">
+        <div className="bg-[#20c7ff] w-full h-[60px] sm:h-[60px] md:h-[60px] rounded-full flex items-center border-r-black-500 shadow-md mt-2 gap-4 ">
           {" "}
           <div className="cursor-pointer ml-6">
             <FaArrowLeftLong
+              color="white"
               size={20}
               onClick={() => dispatchRedux(clearSelectedUser())}
             />
@@ -24,11 +30,13 @@ function MessageArea() {
               title="profile"
             />
           </div>
-          <h1 className=" font-semibold text-[18px]">{selectedUser?.name}</h1>
+          <h1 className=" font-semibold text-[18px] text-white">
+            {selectedUser?.name}
+          </h1>
         </div>
       )}
       {!selectedUser && (
-        <div className="h-full flex items-center justify-center">
+        <div className="h-full w-full flex items-center justify-center">
           <h1 className="text-[18px] font-margarine text-gray-600">
             Welcome to Pakhii || Chatting
           </h1>
