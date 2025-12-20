@@ -1,7 +1,13 @@
-import { sendMessage } from "../controllers/messageController.js";
+import { getMessages, sendMessage } from "../controllers/messageController.js";
 import { isAuth } from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
 
 const messageRouter = express.Router();
-messageRouter.get("/send/:receiver", isAuth, upload.single("image"), sendMessage);
+messageRouter.post(
+  "/send/:receiver",
+  isAuth,
+  upload.single("image"),
+  sendMessage
+);
+messageRouter.get("/get/:receiver", isAuth, getMessages);
 export default messageRouter;
