@@ -2,12 +2,17 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import emptyImage from "../assets/emptyImage.png";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSelectedUser } from "../redux/userSlice";
+import { BsEmojiGrin } from "react-icons/bs";
+import { IoMdSend } from "react-icons/io";
+import { FaRegImages } from "react-icons/fa";
+
+
 function MessageArea() {
   const { selectedUser } = useSelector((state) => state.user);
   const dispatchRedux = useDispatch();
   return (
     <div
-      className={`md:w-40% w-full h-full sm:px-5 px-5  ${
+      className={`md:w-40% w-full h-screen relative ${
         selectedUser ? "block" : "hidden md:flex"
       }
 `}
@@ -40,6 +45,32 @@ function MessageArea() {
           <h1 className="text-[18px] font-margarine text-gray-600">
             Welcome to Pakhii || Chatting
           </h1>
+        </div>
+      )}
+
+      {selectedUser && (
+        <div className="fixed bottom-1 md:right-2 sm:right-0 md:w-[61%] w-full mx-auto h-[60px] shadow-[0_0_15px] shadow-gray-300 rounded-2xl px-6">
+          <form className="flex items-center w-full h-[60px] gap-4">
+            <div>
+              <BsEmojiGrin
+                size={22}
+                color="#898989"
+                className="cursor-pointer"
+              />
+            </div>
+            <div className="w-full">
+              <input
+                type="text"
+                className="w-full h-[30px] caret-black outline-none text-black placeholder:text-gray-400"
+                placeholder="Message"
+              />
+            </div>
+            <div><FaRegImages size={20} color="#898989"/>
+</div>
+            <div>
+              <IoMdSend size={25} className="cursor-pointer" />
+            </div>
+          </form>
         </div>
       )}
     </div>

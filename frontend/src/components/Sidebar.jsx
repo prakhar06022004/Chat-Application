@@ -32,7 +32,7 @@ function Sidebar() {
 
   const { userData, otherUserData,selectedUser } = useSelector((state) => state.user);
   return (
-    <div className={`md:w-[60%] w-full h-full bg-slate-200 border-r border-gray-300 p-1 relative select-none  ${selectedUser ? "hidden md:block" : "block"}`}>
+    <div className={`md:w-[60%] w-full h-screen bg-slate-200 border-r border-gray-300 p-1 relative select-none  ${selectedUser ? "hidden md:block" : "block"}`}>
       <h1 className="text-2xl text-white font-lobster mt-2 font-semibold shadow-md shadow-gray-400 p-1 px-2 rounded-2xl bg-[#20c7ff] w-fit m-auto">
         Pakhiii | Chatting
       </h1>
@@ -88,7 +88,7 @@ function Sidebar() {
           ))}
         </div>
       </div> */}
-      <div className="w-full h-full flex flex-col items-center gap-2 mt-3 cursor-pointer ">
+      <div className="w-full flex flex-col items-center gap-2 mt-3 cursor-pointer ">
         {otherUserData?.map((user) => (
           <div
             key={user._id}
