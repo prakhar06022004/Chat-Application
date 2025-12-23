@@ -13,6 +13,7 @@ body {
   --font-margarine: "Margarine", sans-serif;
 }
 
+
 /* Thin horizontal scrollbar */
 .thin-scrollbar {
   scrollbar-width: thin; /* Firefox */

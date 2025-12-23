@@ -7,15 +7,17 @@ import { IoMdSend } from "react-icons/io";
 import { FaRegImages } from "react-icons/fa";
 import { useState } from "react";
 import EmojiPicker from "emoji-picker-react";
+import Sender from "./Sender";
+import Receiver from "./Receiver";
 
 function MessageArea() {
   const { selectedUser } = useSelector((state) => state.user);
   const dispatchRedux = useDispatch();
   const [showPicker, setShowPicker] = useState(false);
-  const [input,setInput] = useState("");
-  const onEmojiClick = (emoji)=>{
-setInput(prevInput=>prevInput+emoji.emoji)
-  }
+  const [input, setInput] = useState("");
+  const onEmojiClick = (emoji) => {
+    setInput((prevInput) => prevInput + emoji.emoji);
+  };
   return (
     <div
       className={`md:w-40% w-full h-screen relative ${
@@ -46,14 +48,22 @@ setInput(prevInput=>prevInput+emoji.emoji)
           </h1>
         </div>
       )}
+
       {selectedUser && (
-        <div className="w-full h-[calc(100vh-140px)] overflow-y-auto bg-amber-50 p-2 relative">
+        <div className="w-full h-[calc(100vh-140px)] overflow-y-auto bg-amber-50 p-2 relative thin-scrollbar">
           {showPicker && (
             <div className="absolute bottom-0">
-              <EmojiPicker width={300} height={300}                 onEmojiClick={onEmojiClick}
-/>
+              <EmojiPicker
+                width={300}
+                height={300}
+                onEmojiClick={onEmojiClick}
+              />
             </div>
           )}
+          <Sender />
+          <Sender />
+          <Sender />
+          <Receiver />
         </div>
       )}
 
@@ -64,7 +74,6 @@ setInput(prevInput=>prevInput+emoji.emoji)
           </h1>
         </div>
       )}
-
       {selectedUser && (
         <div className="fixed bottom-1 md:right-2 sm:right-0 md:w-[61%] w-full mx-auto h-[60px] shadow-[0_0_15px] shadow-gray-300 rounded-2xl px-6 z-999">
           <form className="flex items-center w-full h-[60px] gap-4">
@@ -80,7 +89,7 @@ setInput(prevInput=>prevInput+emoji.emoji)
                 type="text"
                 className="w-full h-[30px] caret-black outline-none text-black placeholder:text-gray-400"
                 placeholder="Message"
-                onChange={(e)=>setInput(e.target.value)}
+                onChange={(e) => setInput(e.target.value)}
                 value={input}
               />
             </div>
