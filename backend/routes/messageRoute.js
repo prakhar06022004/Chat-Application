@@ -1,3 +1,4 @@
+import express from "express";
 import { getMessages, sendMessage } from "../controllers/messageController.js";
 import { isAuth } from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";

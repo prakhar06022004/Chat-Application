@@ -5,18 +5,51 @@ import { clearSelectedUser } from "../redux/userSlice";
 import { BsEmojiGrin } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import { FaRegImages } from "react-icons/fa";
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 import Sender from "./Sender";
 import Receiver from "./Receiver";
+import { UserContext } from "../context/ContextApi";
+import axios from "axios";
 
 function MessageArea() {
+  const { serverUrl } = useContext(UserContext);
   const { selectedUser } = useSelector((state) => state.user);
   const dispatchRedux = useDispatch();
   const [showPicker, setShowPicker] = useState(false);
   const [input, setInput] = useState("");
+  const image = useRef();
   const onEmojiClick = (emoji) => {
     setInput((prevInput) => prevInput + emoji.emoji);
+  };
+  const [frontendImage, setFrontendImage] = useState("");
+  const handleImagePreview = (e) => {
+    const file = e.target.files[0];
+    setFrontendImage(URL.createObjectURL(file));
+    setbackendImage(file);
+  };
+  const [backendImage, setbackendImage] = useState("");
+
+  const handleSendMessages = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    if (backendImage) {
+      formData.append("image", backendImage);
+    }
+    formData.append("message", input);
+    try {
+      const { data } = await axios.post(
+        `${serverUrl}/message/send/${selectedUser._id}`,
+        formData,
+        { withCredentials: true }
+      );
+      console.log(data);
+      setInput("");
+      setFrontendImage(null);
+      setbackendImage(null);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
   return (
     <div
@@ -60,10 +93,10 @@ function MessageArea() {
               />
             </div>
           )}
+          {/* <Sender />
           <Sender />
           <Sender />
-          <Sender />
-          <Receiver />
+          <Receiver /> */}
         </div>
       )}
 
@@ -76,7 +109,17 @@ function MessageArea() {
       )}
       {selectedUser && (
         <div className="fixed bottom-1 md:right-2 sm:right-0 md:w-[61%] w-full mx-auto h-[60px] shadow-[0_0_15px] shadow-gray-300 rounded-2xl px-6 z-999">
-          <form className="flex items-center w-full h-[60px] gap-4">
+          <form
+            className="flex items-center w-full h-[60px] gap-4 relative"
+            onSubmit={handleSendMessages}
+          >
+            <input
+              type="file"
+              hidden
+              ref={image}
+              accept="image/*"
+              onChange={handleImagePreview}
+            />
             <div onClick={() => setShowPicker((prev) => !prev)}>
               <BsEmojiGrin
                 size={22}
@@ -84,6 +127,12 @@ function MessageArea() {
                 className="cursor-pointer"
               />
             </div>
+            {frontendImage && (
+              <img
+                src={frontendImage}
+                className="object-cover w-[100px] h-[100px] absolute bottom-16 rounded-2xl"
+              />
+            )}
             <div className="w-full select-none">
               <input
                 type="text"
@@ -93,12 +142,16 @@ function MessageArea() {
                 value={input}
               />
             </div>
-            <div>
-              <FaRegImages size={20} color="#898989" />
+            <div onClick={() => image.current.click()}>
+              <FaRegImages
+                size={20}
+                color="#898989"
+                className="cursor-pointer"
+              />
             </div>
-            <div>
+            <button>
               <IoMdSend size={25} className="cursor-pointer" />
-            </div>
+            </button>
           </form>
         </div>
       )}

@@ -12,7 +12,7 @@ export const sendMessage = async (req, res) => {
       image = await uploadOnCloudinary(req.file.path);
     }
 
-    const conversation = await Conversation.findOne({
+    let conversation = await Conversation.findOne({
       participants: { $all: [sender, receiver] },
     });
     const newMessage = await Message.create({
@@ -38,10 +38,10 @@ export const sendMessage = async (req, res) => {
 };
 
 export const getMessages = async (req, res) => {
-  const { sender } = req.userId;
+  const sender = req.userId;
   const { receiver } = req.params;
   try {
-    const conversation = await Conversation.findOne({
+    let conversation = await Conversation.findOne({
       participants: { $all: [sender, receiver] },
     }).populate("messages");
     if (!conversation) {
