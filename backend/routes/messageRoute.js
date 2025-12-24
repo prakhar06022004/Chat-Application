@@ -10,5 +10,5 @@ messageRouter.post(
   upload.single("image"),
   sendMessage
 );
-messageRouter.get("/get/:receiver", isAuth, getMessages);
+messageRouter.get("/receive/:receiver", isAuth, getMessages);
 export default messageRouter;
