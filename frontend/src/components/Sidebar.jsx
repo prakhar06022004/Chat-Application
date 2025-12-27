@@ -5,24 +5,45 @@ import { IoIosSearch } from "react-icons/io";
 import { SlLogout } from "react-icons/sl";
 import { logout, setSelectedUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState, useMemo } from "react";
 import axios from "axios";
 import { UserContext } from "../context/ContextApi";
 
 function Sidebar() {
   const { serverUrl } = useContext(UserContext);
-
   const dispatchRedux = useDispatch();
   const navigate = useNavigate();
 
+  // 🔒 SAFE Redux state access
+  const userState = useSelector((state) => state.user);
+  const userData = userState?.userData;
+  const selectedUser = userState?.selectedUser;
+
+  // ✅ IMPORTANT: force array
+  const otherUserData = Array.isArray(userState?.otherUserData)
+    ? userState.otherUserData
+    : [];
+
+  // Search state
+  const [search, setSearch] = useState("");
+
+  // ✅ SAFE filter (never crashes)
+  const filteredUsers = useMemo(() => {
+    if (!search.trim()) return otherUserData;
+
+    return otherUserData.filter((user) =>
+      user.name?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, otherUserData]);
+
+  // Logout
   const handleLogout = async () => {
     try {
       await axios.post(
-        serverUrl + "/auth/logout",
+        `${serverUrl}/auth/logout`,
         {},
         { withCredentials: true }
       );
-
       dispatchRedux(logout());
       navigate("/login");
     } catch (error) {
@@ -30,93 +51,76 @@ function Sidebar() {
     }
   };
 
-  const { userData, otherUserData,selectedUser } = useSelector((state) => state.user);
   return (
-    <div className={`md:w-[60%] w-full h-screen bg-slate-200 border-r border-gray-300 p-1 relative select-none  ${selectedUser ? "hidden md:block" : "block"}`}>
-      <h1 className="text-2xl text-white font-lobster mt-2 font-semibold shadow-md shadow-gray-400 p-1 px-2 rounded-2xl bg-[#20c7ff] w-fit m-auto">
+    <div
+      className={`md:w-[60%] w-full h-screen bg-slate-200 border-r p-1 relative ${
+        selectedUser ? "hidden md:block" : "block"
+      }`}
+    >
+      {/* Title */}
+      <h1 className="text-2xl text-white font-semibold bg-[#20c7ff] w-fit m-auto px-3 py-1 rounded-2xl mt-2">
         Pakhiii | Chatting
       </h1>
-      <div className="bg-[#20c7ff] w-full sm:h-[60px] h-[60px] rounded-full flex flex-col items-center justify-center text-center border-r-black-500 shadow-md mt-2">
-        <div className="w-full flex justify-between items-center px-5">
-          <h1 className="font-lobster -tracking-normal text-white font-bold text-[20px]">
-            Hi,{" "}
-            <span className="text-white font-normal text-[18px]">
-              {userData?.name || "user"}
-            </span>
-          </h1>
-          <div
-            className="sm:w-[45px] sm:h-[45px] w-[35px] h-[35px] rounded-full overflow-visible relative cursor-pointer"
-            onClick={() => navigate("/profile")}
-          >
-            <img
-              src={userData?.image || emptyImage}
-              alt="profile"
-              className="w-full h-full object-cover rounded-full shadow-gray-500 shadow-md"
-              title="profile"
-            />
 
-            <span className="absolute -bottom-0.5 right-0">
-              <GoDotFill color="#51f542" />
-            </span>
-          </div>
+      {/* Header */}
+      <div className="bg-[#20c7ff] h-[60px] rounded-full flex items-center justify-between px-5 mt-2">
+        <h1 className="text-white text-[18px]">
+          Hi, {userData?.name || "User"}
+        </h1>
+
+        <div
+          className="w-[45px] h-[45px] rounded-full relative cursor-pointer"
+          onClick={() => navigate("/profile")}
+        >
+          <img
+            src={userData?.image || emptyImage}
+            className="w-full h-full object-cover rounded-full"
+          />
+          <span className="absolute -bottom-1 right-0">
+            <GoDotFill color="#51f542" />
+          </span>
         </div>
       </div>
-      <div className="border mt-3 w-full rounded-2xl border-white bg-white flex p-1">
+
+      {/* Search */}
+      <div className="mt-3 bg-white rounded-2xl flex p-1">
         <input
           type="search"
-          className="w-full px-2 py-1 outline-none"
-          placeholder="Search users . . ."
+          className="w-full px-2 outline-none"
+          placeholder="Search users..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <IoIosSearch size={30} />
       </div>
-      {/* Online users strip */}
-      {/* <div className="w-full overflow-x-auto overflow-y-hidden mt-3 thin-scrollbar">
-        <div className="flex gap-2 px-1 h-[60px] items-center">
-          {otherUserData?.map((user) => (
+
+      {/* Users */}
+      <div className="mt-3 flex flex-col gap-2">
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
             <div
               key={user._id}
-              className="w-[50px] h-[50px] rounded-full shrink-0 relative"
+              className="bg-white rounded-2xl flex items-center gap-3 p-2 shadow cursor-pointer hover:bg-gray-100"
+              onClick={() => dispatchRedux(setSelectedUser(user))}
             >
               <img
                 src={user.image || emptyImage}
-                className="w-full h-full object-cover rounded-full"
+                className="w-[50px] h-[50px] rounded-full object-cover"
               />
-              <span className="absolute -bottom-0.5 right-0">
-                <GoDotFill color="#929693" />
-              </span>
+              <h1 className="font-semibold">{user.name}</h1>
             </div>
-          ))}
-        </div>
-      </div> */}
-      <div className="w-full flex flex-col items-center gap-2 mt-3 cursor-pointer ">
-        {otherUserData?.map((user) => (
-          <div
-            key={user._id}
-            className="w-full h-[60px] flex items-stretch bg-white shadow-md shadow-gray-400 rounded-2xl gap-3 px-1 hover:bg-gray-100 duration-150"
-            onClick={() => dispatchRedux(setSelectedUser(user))}
-          >
-            {/* Image wrapper */}
-            <div className="w-[50px] h-full flex items-center shrink-0">
-              <img
-                src={user.image || emptyImage}
-                className="w-[50px] h-[50px] object-cover rounded-full"
-              />
-            </div>
-
-            {/* Text wrapper */}
-            <div className="flex flex-col justify-start pt-1">
-              <h1 className="text-sm font-semibold text-[16px]">
-                {user?.name}
-              </h1>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-center text-gray-500 mt-5">
+            No users found
+          </p>
+        )}
       </div>
 
+      {/* Logout */}
       <button
-        className="bg-[#20c7ff] w-fit p-5 rounded-full absolute bottom-0 cursor-pointer"
+        className="bg-[#20c7ff] p-4 rounded-full absolute bottom-2 right-2"
         onClick={handleLogout}
-        title="logout"
       >
         <SlLogout />
       </button>
