@@ -5,29 +5,49 @@ import GetCurrentUser from "./customHooks/getCurrentUser";
 import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { UserContext } from "./context/ContextApi";
 import { ScaleLoader } from "react-spinners";
 import GetOtherUser from "./customHooks/getOtherUsers";
 import { io } from "socket.io-client";
+
 function App() {
   GetCurrentUser();
   GetOtherUser();
-  useEffect(() => {
-    const socket = io("http://localhost:8000");
-    socket.on("hello",(message)=>{
-      console.log(message)
-    })
-  }, []);
-  const { authLoading } = useContext(UserContext);
+
+  const { serverUrl, authLoading } = useContext(UserContext);
   const { userData } = useSelector((state) => state.user);
+
+  // 🔐 socket reference (important)
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    // ❌ jab tak userData na ho, connect mat karo
+    if (!userData?._id) return;
+
+    socketRef.current = io(serverUrl, {
+      query: {
+        userId: userData._id,
+      },
+      withCredentials: true,
+    });
+
+    console.log("Socket connected with userId:", userData._id);
+
+    return () => {
+      socketRef.current?.disconnect();
+      socketRef.current = null;
+    };
+  }, [userData?._id, serverUrl]); // 🔥 dependency fix
+
   if (authLoading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
-        <ScaleLoader size={30} color="#525252" className="" />
+        <ScaleLoader size={30} color="#525252" />
       </div>
     );
   }
+
   return (
     <Routes>
       <Route
@@ -51,3 +71,4 @@ function App() {
 }
 
 export default App;
+ 
