@@ -5,13 +5,20 @@ import GetCurrentUser from "./customHooks/getCurrentUser";
 import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "./context/ContextApi";
 import { ScaleLoader } from "react-spinners";
 import GetOtherUser from "./customHooks/getOtherUsers";
+import { io } from "socket.io-client";
 function App() {
   GetCurrentUser();
   GetOtherUser();
+  useEffect(() => {
+    const socket = io("http://localhost:8000");
+    socket.on("hello",(message)=>{
+      console.log(message)
+    })
+  }, []);
   const { authLoading } = useContext(UserContext);
   const { userData } = useSelector((state) => state.user);
   if (authLoading) {

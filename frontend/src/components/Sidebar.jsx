@@ -14,27 +14,19 @@ function Sidebar() {
   const dispatchRedux = useDispatch();
   const navigate = useNavigate();
 
-  // 🔒 SAFE Redux state access
-  const userState = useSelector((state) => state.user);
-  const userData = userState?.userData;
-  const selectedUser = userState?.selectedUser;
-
-  // ✅ IMPORTANT: force array
-  const otherUserData = Array.isArray(userState?.otherUserData)
-    ? userState.otherUserData
-    : [];
+const { userData, otherUserData, selectedUser } = useSelector(
+    (state) => state.user
+  );
 
   // Search state
   const [search, setSearch] = useState("");
 
-  // ✅ SAFE filter (never crashes)
-  const filteredUsers = useMemo(() => {
-    if (!search.trim()) return otherUserData;
+    const users = Array.isArray(otherUserData) ? otherUserData : [];
 
-    return otherUserData.filter((user) =>
-      user.name?.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, otherUserData]);
+  // 🔍 Simple filter
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   // Logout
   const handleLogout = async () => {
@@ -53,7 +45,7 @@ function Sidebar() {
 
   return (
     <div
-      className={`md:w-[60%] w-full h-screen bg-slate-200 border-r p-1 relative ${
+      className={`md:w-[60%] w-full h-screen bg-slate-200 border-r border-gray-300 p-1 relative ${
         selectedUser ? "hidden md:block" : "block"
       }`}
     >

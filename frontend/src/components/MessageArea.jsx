@@ -19,6 +19,10 @@ function MessageArea() {
   const { messages } = useSelector((state) => state.message);
 
   const dispatchRedux = useDispatch();
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView();
+  }, [messages]);
 
   const [showPicker, setShowPicker] = useState(false);
   const [input, setInput] = useState("");
@@ -32,6 +36,7 @@ function MessageArea() {
   // --------------------------------------------------
   useEffect(() => {
     if (!selectedUser) return;
+    dispatchRedux(setMessages([]));
 
     const fetchMessages = async () => {
       try {
@@ -70,7 +75,9 @@ function MessageArea() {
   // --------------------------------------------------
   const handleSendMessages = async (e) => {
     e.preventDefault();
-
+  if (!input.trim() && !backendImage) {
+    return; // kuch bhi bhejna hi nahi
+  }
     const formData = new FormData();
     if (backendImage) formData.append("image", backendImage);
     formData.append("message", input);
@@ -132,8 +139,12 @@ function MessageArea() {
       {selectedUser && (
         <div className="w-full h-[calc(100vh-140px)] overflow-y-auto bg-amber-50 p-2 thin-scrollbar">
           {showPicker && (
-            <div className="absolute bottom-0">
-              <EmojiPicker width={300} height={300} onEmojiClick={onEmojiClick} />
+            <div className="absolute bottom-16">
+              <EmojiPicker
+                width={300}
+                height={300}
+                onEmojiClick={onEmojiClick}
+              />
             </div>
           )}
 
@@ -144,6 +155,7 @@ function MessageArea() {
               <Receiver key={msg._id} image={msg.image} message={msg.message} />
             )
           )}
+          <div ref={scrollRef}></div>
         </div>
       )}
 

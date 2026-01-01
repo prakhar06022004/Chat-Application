@@ -6,8 +6,8 @@ import authRouter from "./routes/authRoutes.js";
 import cors from "cors";
 import userRouter from "./routes/getCurrentUser.js";
 import messageRouter from "./routes/messageRoute.js";
+import { app, server } from "./socket.io/socket.io.js";
 
-const app = express();
 dotenv.config();
 const port = process.env.PORT || 5000;
 app.use(cookieParser());
@@ -25,7 +25,7 @@ app.use("/user", userRouter);
 app.use("/message", messageRouter);
 
 connectDb().then(() => {
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Server listening on ${port}`);
   });
 });

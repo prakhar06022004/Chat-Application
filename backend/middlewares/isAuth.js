@@ -6,7 +6,7 @@ export const isAuth = async (req, res, next) => {
       return res.status(401).json({ message: "Token is not found!" });
     }
     let decoded = await jwt.verify(token, process.env.JWT_TOKEN);
-    console.log(decoded);
+    // console.log(decoded);
     req.userId = decoded.userId;
     next();
   } catch (error) {
