@@ -1,5 +1,6 @@
 import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
+import { getReceiverSocketId, io } from "../socket.io/socket.io.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 export const sendMessage = async (req, res) => {
@@ -31,6 +32,10 @@ export const sendMessage = async (req, res) => {
       conversation.messages.push(newMessage._id);
       await conversation.save();
     }
+    const receiverSocketId = getReceiverSocketId(receiver)
+    if(receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage",newMessage)
+    }
     return res.status(201).json(newMessage);
   } catch (error) {
     return res.status(500).json({ message: "send message error", error });
@@ -52,3 +57,4 @@ export const getMessages = async (req, res) => {
     return res.status(500).json({ message: "getMessage error", error });
   }
 };
+

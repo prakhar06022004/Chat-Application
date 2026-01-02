@@ -111,8 +111,9 @@ const { userData, otherUserData, selectedUser } = useSelector(
 
       {/* Logout */}
       <button
-        className="bg-[#20c7ff] p-4 rounded-full absolute bottom-2 right-2"
+        className="bg-[#20c7ff] p-4 rounded-full absolute bottom-2 right-2 cursor-pointer"
         onClick={handleLogout}
+
       >
         <SlLogout />
       </button>

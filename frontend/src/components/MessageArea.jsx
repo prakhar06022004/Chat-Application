@@ -11,11 +11,11 @@ import Sender from "./Sender";
 import Receiver from "./Receiver";
 import { UserContext } from "../context/ContextApi";
 import axios from "axios";
-import { setMessages } from "../redux/messageSlice";
+import { setMessages, addMessage } from "../redux/messageSlice";
 
 function MessageArea() {
   const { serverUrl } = useContext(UserContext);
-  const { selectedUser, userData } = useSelector((state) => state.user);
+  const { selectedUser, userData, socket } = useSelector((state) => state.user);
   const { messages } = useSelector((state) => state.message);
 
   const dispatchRedux = useDispatch();
@@ -31,9 +31,7 @@ function MessageArea() {
 
   const image = useRef();
 
-  // --------------------------------------------------
-  // ✔ FETCH MESSAGES WHEN CHAT CHANGES
-  // --------------------------------------------------
+  // FETCH MESSAGES WHEN CHAT CHANGES
   useEffect(() => {
     if (!selectedUser) return;
     dispatchRedux(setMessages([]));
@@ -54,30 +52,24 @@ function MessageArea() {
     fetchMessages();
   }, [selectedUser]);
 
-  // --------------------------------------------------
-  // ✔ EMOJI PICKER
-  // --------------------------------------------------
+  // EMOJI PICKER
   const onEmojiClick = (emoji) => {
     setInput((prevInput) => prevInput + emoji.emoji);
   };
 
-  // --------------------------------------------------
-  // ✔ IMAGE PREVIEW
-  // --------------------------------------------------
+  // IMAGE PREVIEW
   const handleImagePreview = (e) => {
     const file = e.target.files[0];
     setFrontendImage(URL.createObjectURL(file));
     setbackendImage(file);
   };
 
-  // --------------------------------------------------
-  // ✔ SEND MESSAGE
-  // --------------------------------------------------
+  // SEND MESSAGE
   const handleSendMessages = async (e) => {
     e.preventDefault();
-  if (!input.trim() && !backendImage) {
-    return; // kuch bhi bhejna hi nahi
-  }
+    if (!input.trim() && !backendImage) {
+      return; // kuch bhi bhejna hi nahi
+    }
     const formData = new FormData();
     if (backendImage) formData.append("image", backendImage);
     formData.append("message", input);
@@ -101,16 +93,33 @@ function MessageArea() {
     }
   };
 
-  // --------------------------------------------------
-  // ✔ BACK BUTTON (ONLY CLOSE CHAT – DON’T DELETE MESSAGES)
-  // --------------------------------------------------
+  //BACK BUTTON (ONLY CLOSE CHAT – DON’T DELETE MESSAGES)
+
   const handleBack = () => {
     dispatchRedux(clearSelectedUser());
   };
 
-  // --------------------------------------------------
-  // ✔ UI
-  // --------------------------------------------------
+  useEffect(() => {
+  if (!socket) return;
+
+  const handleNewMessage = (message) => {
+    // sirf active chat ka message
+    if (
+      message.sender === selectedUser?._id ||
+      message.receiver === selectedUser?._id
+    ) {
+      dispatchRedux(addMessage(message));
+    }
+  };
+
+  socket.on("newMessage", handleNewMessage);
+
+  return () => {
+    socket.off("newMessage", handleNewMessage);
+  };
+}, [socket, selectedUser?._id, dispatchRedux]);
+
+
   return (
     <div
       className={`md:w-40% w-full h-screen relative ${
