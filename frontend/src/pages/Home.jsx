@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import GetMessages from "../customHooks/getMessages";
 
 function Home() {
-  GetMessages
+  GetMessages()
   return (
 
       <div className="w-full flex ">

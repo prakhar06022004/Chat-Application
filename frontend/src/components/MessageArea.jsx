@@ -14,6 +14,9 @@ import axios from "axios";
 import { setMessages, addMessage } from "../redux/messageSlice";
 
 function MessageArea() {
+  const [isTyping, setIsTyping] = useState(false);
+const [typingUser, setTypingUser] = useState(false);
+
   const { serverUrl } = useContext(UserContext);
   const { selectedUser, userData, socket } = useSelector((state) => state.user);
   const { messages } = useSelector((state) => state.message);
@@ -80,7 +83,8 @@ function MessageArea() {
         formData,
         { withCredentials: true }
       );
-
+socket.emit("stopTyping", selectedUser._id);
+setIsTyping(false);
       // APPEND new message (NOT OVERWRITE)
       dispatchRedux(setMessages([...messages, data]));
 
@@ -119,6 +123,22 @@ function MessageArea() {
   };
 }, [socket, selectedUser?._id, dispatchRedux]);
 
+useEffect(() => {
+  if (!socket) return;
+
+  socket.on("typing", () => {
+    setTypingUser(true);
+  });
+
+  socket.on("stopTyping", () => {
+    setTypingUser(false);
+  });
+
+  return () => {
+    socket.off("typing");
+    socket.off("stopTyping");
+  };
+}, [socket]);
 
   return (
     <div
@@ -157,13 +177,20 @@ function MessageArea() {
             </div>
           )}
 
-          {messages?.map((msg) =>
-            msg?.sender === userData._id ? (
-              <Sender key={msg._id} image={msg.image} message={msg.message} />
-            ) : (
-              <Receiver key={msg._id} image={msg.image} message={msg.message} />
-            )
-          )}
+{messages?.map((msg) =>
+  msg?.sender === userData._id ? (
+    <Sender key={msg._id} image={msg.image} message={msg.message} />
+  ) : (
+    <Receiver key={msg._id} image={msg.image} message={msg.message} />
+  )
+)}
+
+{typingUser && (
+  <div className="flex items-center gap-2 ml-4 mt-5">
+    <span className="text-xs text-gray-400">Typing...</span>
+  </div>
+)}
+
           <div ref={scrollRef}></div>
         </div>
       )}
@@ -205,13 +232,36 @@ function MessageArea() {
               />
             )}
 
-            <input
-              type="text"
-              className="w-full h-[30px] caret-black outline-none"
-              placeholder="Message"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
+     <input
+  type="text"
+  className="w-full h-[30px] caret-black outline-none"
+  placeholder="Message"
+  value={input}
+  onChange={(e) => {
+    setInput(e.target.value);
+
+    if (!socket) return;
+
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", selectedUser._id);
+    }
+
+    const lastTypingTime = new Date().getTime();
+    const timerLength = 3000;
+
+    setTimeout(() => {
+      const timeNow = new Date().getTime();
+      const timeDiff = timeNow - lastTypingTime;
+
+      if (timeDiff >= timerLength && isTyping) {
+        socket.emit("stopTyping", selectedUser._id);
+        setIsTyping(false);
+      }
+    }, timerLength);
+  }}
+/>
+
 
             <div onClick={() => image.current.click()}>
               <FaRegImages

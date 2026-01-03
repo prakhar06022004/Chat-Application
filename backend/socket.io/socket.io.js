@@ -26,6 +26,20 @@ io.on("connection", (socket) => {
 
   // ✅ send updated online users
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+// 🔹 TYPING INDICATOR EVENTS
+socket.on("typing", (receiverId) => {
+  const receiverSocketId = userSocketMap[receiverId];
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("typing");
+  }
+});
+
+socket.on("stopTyping", (receiverId) => {
+  const receiverSocketId = userSocketMap[receiverId];
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("stopTyping");
+  }
+});
 
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
