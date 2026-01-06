@@ -168,10 +168,10 @@ useEffect(() => {
       {selectedUser && (
         <div className="w-full h-[calc(100vh-140px)] overflow-y-auto bg-amber-50 p-2 thin-scrollbar">
           {showPicker && (
-            <div className="absolute bottom-16">
+            <div className="absolute bottom-16 z-1000">
               <EmojiPicker
-                width={300}
-                height={300}
+                 width={window.innerWidth < 768 ? 250 : 400}
+      height={window.innerWidth < 768 ? 320 : 400}
                 onEmojiClick={onEmojiClick}
               />
             </div>

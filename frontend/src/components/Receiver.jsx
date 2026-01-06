@@ -18,7 +18,7 @@ function Receiver({ image, message  }) {
             className="md:w-[200px] md:h-[200px] h-[150px] w-[150px] object-cover"
           />
         )}
-        {message && <span className="">{message}</span>}
+        {message && <span>{message}</span>}
       </div>
     </div>
   );
