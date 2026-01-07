@@ -5,7 +5,7 @@ import { IoIosSearch } from "react-icons/io";
 import { SlLogout } from "react-icons/sl";
 import { logout, setSelectedUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../context/ContextApi";
 
@@ -14,14 +14,14 @@ function Sidebar() {
   const dispatchRedux = useDispatch();
   const navigate = useNavigate();
 
-const { userData, otherUserData, selectedUser } = useSelector(
+  const { userData, otherUserData, selectedUser, onlineUsers } = useSelector(
     (state) => state.user
   );
 
   // Search state
   const [search, setSearch] = useState("");
 
-    const users = Array.isArray(otherUserData) ? otherUserData : [];
+  const users = Array.isArray(otherUserData) ? otherUserData : [];
 
   // 🔍 Simple filter
   const filteredUsers = users.filter((user) =>
@@ -73,7 +73,24 @@ const { userData, otherUserData, selectedUser } = useSelector(
           </span>
         </div>
       </div>
-
+      {!search &&
+        otherUserData?.map(
+          (user) =>
+            onlineUsers.includes(user._id) && (
+              <div
+                className=" w-12 h-12 md:w-[60px] md:h-[60px] mt-2.5  flex justify-center items-center rounded-full
+shadow-gray-500 bg-white shadow-lg relative"
+              >
+                <img
+                  src={user.image || dp}
+                  className="h-full w-full object-cover rounded-full"
+                />
+                <span className="absolute right-0 bottom-0">
+                  <GoDotFill color="#51f542" />
+                </span>
+              </div>
+            )
+        )}
       {/* Search */}
       <div className="mt-3 bg-white rounded-2xl flex p-1">
         <input
@@ -103,9 +120,7 @@ const { userData, otherUserData, selectedUser } = useSelector(
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500 mt-5">
-            No users found
-          </p>
+          <p className="text-center text-gray-500 mt-5">No users found</p>
         )}
       </div>
 
@@ -113,7 +128,6 @@ const { userData, otherUserData, selectedUser } = useSelector(
       <button
         className="bg-[#20c7ff] p-4 rounded-full absolute bottom-2 right-2 cursor-pointer"
         onClick={handleLogout}
-
       >
         <SlLogout />
       </button>

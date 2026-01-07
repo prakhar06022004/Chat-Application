@@ -15,7 +15,7 @@ import { setMessages, addMessage } from "../redux/messageSlice";
 
 function MessageArea() {
   const [isTyping, setIsTyping] = useState(false);
-const [typingUser, setTypingUser] = useState(false);
+  const [typingUser, setTypingUser] = useState(false);
 
   const { serverUrl } = useContext(UserContext);
   const { selectedUser, userData, socket } = useSelector((state) => state.user);
@@ -26,6 +26,7 @@ const [typingUser, setTypingUser] = useState(false);
   useEffect(() => {
     scrollRef.current?.scrollIntoView();
   }, [messages]);
+  const typingTimeoutRef = useRef(null);
 
   const [showPicker, setShowPicker] = useState(false);
   const [input, setInput] = useState("");
@@ -83,8 +84,8 @@ const [typingUser, setTypingUser] = useState(false);
         formData,
         { withCredentials: true }
       );
-socket.emit("stopTyping", selectedUser._id);
-setIsTyping(false);
+      socket.emit("stopTyping", selectedUser._id);
+      setIsTyping(false);
       // APPEND new message (NOT OVERWRITE)
       dispatchRedux(setMessages([...messages, data]));
 
@@ -104,41 +105,41 @@ setIsTyping(false);
   };
 
   useEffect(() => {
-  if (!socket) return;
+    if (!socket) return;
 
-  const handleNewMessage = (message) => {
-    // sirf active chat ka message
-    if (
-      message.sender === selectedUser?._id ||
-      message.receiver === selectedUser?._id
-    ) {
-      dispatchRedux(addMessage(message));
-    }
-  };
+    const handleNewMessage = (message) => {
+      // sirf active chat ka message
+      if (
+        message.sender === selectedUser?._id ||
+        message.receiver === selectedUser?._id
+      ) {
+        dispatchRedux(addMessage(message));
+      }
+    };
 
-  socket.on("newMessage", handleNewMessage);
+    socket.on("newMessage", handleNewMessage);
 
-  return () => {
-    socket.off("newMessage", handleNewMessage);
-  };
-}, [socket, selectedUser?._id, dispatchRedux]);
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [socket, selectedUser?._id, dispatchRedux]);
 
-useEffect(() => {
-  if (!socket) return;
+  useEffect(() => {
+    if (!socket) return;
 
-  socket.on("typing", () => {
-    setTypingUser(true);
-  });
+    socket.on("typing", () => {
+      setTypingUser(true);
+    });
 
-  socket.on("stopTyping", () => {
-    setTypingUser(false);
-  });
+    socket.on("stopTyping", () => {
+      setTypingUser(false);
+    });
 
-  return () => {
-    socket.off("typing");
-    socket.off("stopTyping");
-  };
-}, [socket]);
+    return () => {
+      socket.off("typing");
+      socket.off("stopTyping");
+    };
+  }, [socket]);
 
   return (
     <div
@@ -170,26 +171,26 @@ useEffect(() => {
           {showPicker && (
             <div className="absolute bottom-16 z-1000">
               <EmojiPicker
-                 width={window.innerWidth < 768 ? 250 : 400}
-      height={window.innerWidth < 768 ? 320 : 400}
+                width={window.innerWidth < 768 ? 250 : 400}
+                height={window.innerWidth < 768 ? 320 : 400}
                 onEmojiClick={onEmojiClick}
               />
             </div>
           )}
 
-{messages?.map((msg) =>
-  msg?.sender === userData._id ? (
-    <Sender key={msg._id} image={msg.image} message={msg.message} />
-  ) : (
-    <Receiver key={msg._id} image={msg.image} message={msg.message} />
-  )
-)}
+          {messages?.map((msg) =>
+            msg?.sender === userData._id ? (
+              <Sender key={msg._id} image={msg.image} message={msg.message} />
+            ) : (
+              <Receiver key={msg._id} image={msg.image} message={msg.message} />
+            )
+          )}
 
-{typingUser && (
-  <div className="flex items-center gap-2 ml-4 mt-5">
-    <span className="text-xs text-gray-400">Typing...</span>
-  </div>
-)}
+          {typingUser && (
+            <div className="sticky bottom-2 flex items-center gap-2 ml-4">
+              <span className="text-xs text-gray-400">Typing...</span>
+            </div>
+          )}
 
           <div ref={scrollRef}></div>
         </div>
@@ -232,36 +233,36 @@ useEffect(() => {
               />
             )}
 
-     <input
-  type="text"
-  className="w-full h-[30px] caret-black outline-none"
-  placeholder="Message"
-  value={input}
-  onChange={(e) => {
-    setInput(e.target.value);
+            <input
+              type="text"
+              className="w-full h-[30px] caret-black outline-none"
+              placeholder="Message"
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
 
-    if (!socket) return;
+                if (!socket) return;
 
-    if (!isTyping) {
-      setIsTyping(true);
-      socket.emit("typing", selectedUser._id);
-    }
+                if (!isTyping) {
+                  setIsTyping(true);
+                  socket.emit("typing", selectedUser._id);
+                }
 
-    const lastTypingTime = new Date().getTime();
-    const timerLength = 3000;
+                if (!isTyping) {
+                  setIsTyping(true);
+                  socket.emit("typing", selectedUser._id);
+                }
 
-    setTimeout(() => {
-      const timeNow = new Date().getTime();
-      const timeDiff = timeNow - lastTypingTime;
+                if (typingTimeoutRef.current) {
+                  clearTimeout(typingTimeoutRef.current);
+                }
 
-      if (timeDiff >= timerLength && isTyping) {
-        socket.emit("stopTyping", selectedUser._id);
-        setIsTyping(false);
-      }
-    }, timerLength);
-  }}
-/>
-
+                typingTimeoutRef.current = setTimeout(() => {
+                  socket.emit("stopTyping", selectedUser._id);
+                  setIsTyping(false);
+                }, 2000);
+              }}
+            />
 
             <div onClick={() => image.current.click()}>
               <FaRegImages
