@@ -3,7 +3,7 @@ import { createContext } from "react";
 export const UserContext = createContext();
 
 function ContextApi({ children }) {
-  const serverUrl = "http://localhost:8000";
+  const serverUrl = "https://chat-application-backend-t5t2.onrender.com";
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 const [othersLoading,setOthersLoading] = useState(true)
