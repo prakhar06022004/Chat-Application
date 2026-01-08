@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../context/ContextApi";
+import emptyImage from "../assets/emptyImage.png";
+
 
 function Sidebar() {
   const { serverUrl } = useContext(UserContext);
