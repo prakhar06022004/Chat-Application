@@ -205,7 +205,7 @@ function MessageArea() {
       )}
 
       {selectedUser && (
-        <div className="fixed bottom-1 md:right-2 md:w-[61%] w-full mx-auto h-[60px] shadow-[0_0_15px] shadow-gray-300 rounded-2xl px-6">
+        <div className="fixed bottom-1 md:right-2 md:w-[61%] w-full mx-auto h-[60px] shadow-[0_0_15px] shadow-gray-300 rounded-2xl px-6 z-50">
           <form
             className="flex items-center w-full h-[60px] gap-4 relative"
             onSubmit={handleSendMessages}
