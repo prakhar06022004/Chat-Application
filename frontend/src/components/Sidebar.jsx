@@ -24,9 +24,11 @@ function Sidebar() {
   const users = Array.isArray(otherUserData) ? otherUserData : [];
 
   // 🔍 Simple filter
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
-  );
+const filteredUsers = users.filter((user) =>
+  (user?.name || "")
+    .toLowerCase()
+    .includes(search.toLowerCase())
+);
 
   // Logout
   const handleLogout = async () => {
