@@ -78,7 +78,7 @@ const filteredUsers = users.filter((user) =>
       {!search &&
         otherUserData?.map(
           (user) =>
-            onlineUsers.includes(user._id) && (
+            onlineUsers?.includes(user._id) && (
               <div
                 className=" w-12 h-12 md:w-[60px] md:h-[60px] mt-2.5  flex justify-center items-center rounded-full
 shadow-gray-500 bg-white shadow-lg relative"
