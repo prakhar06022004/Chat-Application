@@ -29,8 +29,8 @@ export const signUp = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
 
     return res.status(201).json({
@@ -58,9 +58,9 @@ export const logIn = async (req, res) => {
     const token = jwtToken(existingUser._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
+            sameSite: "None",
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
     return res
       .status(200)
