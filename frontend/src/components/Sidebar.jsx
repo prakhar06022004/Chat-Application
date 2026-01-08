@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../context/ContextApi";
-import emptyImage from "../assets/emptyImage.png";
 
 
 function Sidebar() {
@@ -86,7 +85,7 @@ const filteredUsers = users.filter((user) =>
 shadow-gray-500 bg-white shadow-lg relative"
               >
                 <img
-                  src={user.image || dp}
+                  src={user.image || emptyImage}
                   className="h-full w-full object-cover rounded-full"
                 />
                 <span className="absolute right-0 bottom-0">
